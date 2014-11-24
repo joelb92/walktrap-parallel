@@ -1,0 +1,166 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXFileReference section */
+		5DDB1D1D1A1E837E0084428A /* communities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = communities.cpp; sourceTree = "<group>"; };
+		5DDB1D1E1A1E837E0084428A /* communities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = communities.h; sourceTree = "<group>"; };
+		5DDB1D1F1A1E837E0084428A /* communities.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = communities.o; sourceTree = "<group>"; };
+		5DDB1D201A1E837E0084428A /* example.net */ = {isa = PBXFileReference; lastKnownFileType = text; path = example.net; sourceTree = "<group>"; };
+		5DDB1D211A1E837E0084428A /* graph.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = graph.cpp; sourceTree = "<group>"; };
+		5DDB1D221A1E837E0084428A /* graph.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = graph.h; sourceTree = "<group>"; };
+		5DDB1D231A1E837E0084428A /* graph.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = graph.o; sourceTree = "<group>"; };
+		5DDB1D241A1E837E0084428A /* heap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = heap.cpp; sourceTree = "<group>"; };
+		5DDB1D251A1E837E0084428A /* heap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = heap.h; sourceTree = "<group>"; };
+		5DDB1D261A1E837E0084428A /* heap.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = heap.o; sourceTree = "<group>"; };
+		5DDB1D271A1E837E0084428A /* license.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = license.txt; sourceTree = "<group>"; };
+		5DDB1D281A1E837E0084428A /* makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
+		5DDB1D291A1E837E0084428A /* readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
+		5DDB1D2A1A1E837E0084428A /* walktrap */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = walktrap; sourceTree = "<group>"; };
+		5DDB1D2B1A1E837E0084428A /* walktrap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = walktrap.cpp; sourceTree = "<group>"; };
+		5DDB1D2C1A1E837E0084428A /* walktrap.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = walktrap.o; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		5DDB1D171A1E837E0084428A = {
+			isa = PBXGroup;
+			children = (
+				5DDB1D1D1A1E837E0084428A /* communities.cpp */,
+				5DDB1D1E1A1E837E0084428A /* communities.h */,
+				5DDB1D1F1A1E837E0084428A /* communities.o */,
+				5DDB1D201A1E837E0084428A /* example.net */,
+				5DDB1D211A1E837E0084428A /* graph.cpp */,
+				5DDB1D221A1E837E0084428A /* graph.h */,
+				5DDB1D231A1E837E0084428A /* graph.o */,
+				5DDB1D241A1E837E0084428A /* heap.cpp */,
+				5DDB1D251A1E837E0084428A /* heap.h */,
+				5DDB1D261A1E837E0084428A /* heap.o */,
+				5DDB1D271A1E837E0084428A /* license.txt */,
+				5DDB1D281A1E837E0084428A /* makefile */,
+				5DDB1D291A1E837E0084428A /* readme.txt */,
+				5DDB1D2A1A1E837E0084428A /* walktrap */,
+				5DDB1D2B1A1E837E0084428A /* walktrap.cpp */,
+				5DDB1D2C1A1E837E0084428A /* walktrap.o */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXLegacyTarget section */
+		5DDB1D1C1A1E837E0084428A /* walktrap02 */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "$(ACTION)";
+			buildConfigurationList = 5DDB1D2D1A1E837E0084428A /* Build configuration list for PBXLegacyTarget "walktrap02" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = "/Users/joel/Documents/Notre Dame/OS/walktrap/walktrap02";
+			dependencies = (
+			);
+			name = walktrap02;
+			passBuildSettingsInEnvironment = 1;
+			productName = walktrap02;
+		};
+/* End PBXLegacyTarget section */
+
+/* Begin PBXProject section */
+		5DDB1D181A1E837E0084428A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+			};
+			buildConfigurationList = 5DDB1D1B1A1E837E0084428A /* Build configuration list for PBXProject "walktrap02" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 5DDB1D171A1E837E0084428A;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5DDB1D1C1A1E837E0084428A /* walktrap02 */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin XCBuildConfiguration section */
+		5DDB1D191A1E837E0084428A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx10.6;
+			};
+			name = Debug;
+		};
+		5DDB1D1A1A1E837E0084428A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				SDKROOT = macosx10.6;
+			};
+			name = Release;
+		};
+		5DDB1D2E1A1E837E0084428A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEBUGGING_SYMBOLS = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = walktrap02;
+			};
+			name = Debug;
+		};
+		5DDB1D2F1A1E837E0084428A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = walktrap02;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5DDB1D1B1A1E837E0084428A /* Build configuration list for PBXProject "walktrap02" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5DDB1D191A1E837E0084428A /* Debug */,
+				5DDB1D1A1A1E837E0084428A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5DDB1D2D1A1E837E0084428A /* Build configuration list for PBXLegacyTarget "walktrap02" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5DDB1D2E1A1E837E0084428A /* Debug */,
+				5DDB1D2F1A1E837E0084428A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5DDB1D181A1E837E0084428A /* Project object */;
+}
