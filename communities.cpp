@@ -73,7 +73,8 @@ Probabilities::Probabilities(int community) {
       for(int i = 0; i < G->nb_vertices; i++)
 	tmp_vector2[i] = 0.;
       if(nb_vertices1 == G->nb_vertices) {
-	for(int i = 0; i < G->nb_vertices; i++) {
+          
+	for(int i = 0; i < G->nb_vertices; i++) {//THIS LOOP CAN BE PARALLELIZED!
 	  float proba = tmp_vector1[i]/G->vertices[i].total_weight;
   	  for(int j = 0; j < G->vertices[i].degree; j++)
 	    tmp_vector2[G->vertices[i].edges[j].neighbor] += proba*G->vertices[i].edges[j].weight;
@@ -339,7 +340,7 @@ Community::~Community() {
   if(P) delete P;
 }
 
-
+//Communities constructor. Communities is a class that holds a graph instance, a list of the current communities, and a min-heap keyed by community distance
 Communities::Communities(Graph* graph, int random_walks_length, bool s, int d, long m) {
   silent = s;
   details = d;
@@ -362,10 +363,10 @@ Communities::Communities(Graph* graph, int random_walks_length, bool s, int d, l
   for(int i = 0; i < G->nb_vertices; i++)
     members[i] = -1;
 
-  H = new Neighbor_heap(G->nb_edges);
-  communities = new Community[2*G->nb_vertices];
+  H = new Neighbor_heap(G->nb_edges);  //Create a new heap of Neighbor objects, where a Neighbor is a pair of 2 different communities
+  communities = new Community[2*G->nb_vertices]; //Initialize the list of communities to a size of 2 times the number of verticies
 
-// init the n single vertex communities
+// init the n single vertex communities (this is the first step in the merging tree)
 
   if(max_memory != -1)
     min_delta_sigma = new Min_delta_sigma_heap(G->nb_vertices*2);
@@ -383,7 +384,7 @@ Communities::Communities(Graph* graph, int random_walks_length, bool s, int d, l
   nb_active_communities = G->nb_vertices;
 
   if(!silent) cerr << "computing random walks and the first distances:";
-  for(int i = 0; i < G->nb_vertices; i++)
+  for(int i = 0; i < G->nb_vertices; i++) //THIS LOOP CAN BE PARALLELIZED!
     for(int j = 0; j < G->vertices[i].degree; j++)
       if (i < G->vertices[i].edges[j].neighbor) {
 	communities[i].total_weight += G->vertices[i].edges[j].weight/2.;
@@ -391,6 +392,7 @@ Communities::Communities(Graph* graph, int random_walks_length, bool s, int d, l
 	Neighbor* N = new Neighbor;
 	N->community1 = i;
 	N->community2 = G->vertices[i].edges[j].neighbor;
+          //This is just an approximation of the delta_sigma that doesn't use any random walking.  We do this to save time.  Therefore we set the "exact" flag to false, and later we begin looping through neighbors and computing their exact values.
 	N->delta_sigma = -1./double(min(G->vertices[i].degree,  G->vertices[G->vertices[i].edges[j].neighbor].degree));
 	N->weight = G->vertices[i].edges[j].weight;
 	N->exact = false;
@@ -406,7 +408,8 @@ Communities::Communities(Graph* graph, int random_walks_length, bool s, int d, l
   }
 
   int c = 0;
-  Neighbor* N = H->get_first();  
+  Neighbor* N = H->get_first();
+    //THIS LOOP CAN BE ATTEMPTED TO BE PARALLELIZED
   while(!N->exact) {
     update_neighbor(N, compute_delta_sigma(N->community1, N->community2));
     N->exact = true;
@@ -750,7 +753,8 @@ void Communities::merge_communities(Neighbor* merge_N) {
 }
 
 double Communities::merge_nearest_communities() {
-  Neighbor* N = H->get_first();  
+  Neighbor* N = H->get_first();
+    //THIS LOOP CAN BE ATTEMPTED TO BE PARALLELIZED
   while(!N->exact) {
     update_neighbor(N, compute_delta_sigma(N->community1, N->community2));
     N->exact = true;

@@ -157,11 +157,11 @@ int main(int argc, char** argv)
     if(G->load_index(index_file)) 
       if(!silent) cerr << "index sucessfuly loaded" << endl << endl;
   }
-  
+  //First create a set of communities
   Communities C(G, length, silent, details, max_memory);  
 
   if(!silent) cerr << "merging the communities:";
-
+    //While the community distance min-heap isn't empty, iteratively merge the nearest communities
   while(!C.H->is_empty()) {
     C.merge_nearest_communities();
   }

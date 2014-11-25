@@ -58,7 +58,7 @@
 			buildPhases = (
 			);
 			buildToolPath = /usr/bin/make;
-			buildWorkingDirectory = "/Users/joel/Documents/Notre Dame/OS/walktrap/walktrap02";
+			buildWorkingDirectory = "/Users/joel/Documents/Operating Systems/Walk Trap/code/Walktrap-Parallel";
 			dependencies = (
 			);
 			name = walktrap02;
@@ -124,6 +124,7 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = walktrap02;
+				SDKROOT = macosx10.9;
 			};
 			name = Debug;
 		};
@@ -136,6 +137,7 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = walktrap02;
+				SDKROOT = macosx10.9;
 			};
 			name = Release;
 		};
