@@ -31,7 +31,8 @@
 
 #include "graph.h"
 #include "heap.h"
-
+#include <vector>
+#define NUM_THREADS 4
 class Communities;
 class Probabilities {
 public:
