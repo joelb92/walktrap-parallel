@@ -58,7 +58,7 @@
 			buildPhases = (
 			);
 			buildToolPath = /usr/bin/make;
-			buildWorkingDirectory = "/Users/joel/Documents/Operating Systems/Walk Trap/code/Walktrap-Parallel";
+			buildWorkingDirectory = "/Users/joel/Documents/Notre Dame/OS/walktrap/walktrap02";
 			dependencies = (
 			);
 			name = walktrap02;

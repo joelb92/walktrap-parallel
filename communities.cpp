@@ -29,7 +29,9 @@
 #include <cstdlib>
 #include <iostream>
 #include <cmath>
-
+#include <vector>
+#include "heap.h"
+#include <pthread.h>
 int Probabilities::length = 0;
 Communities* Probabilities::C = 0;
 float* Probabilities::tmp_vector1 = 0;
@@ -73,7 +75,7 @@ Probabilities::Probabilities(int community) {
             for(int i = 0; i < G->nb_vertices; i++)
                 tmp_vector2[i] = 0.;
             if(nb_vertices1 == G->nb_vertices) {
-                //          std::cout <<"Starting initial probability calcs";
+                          std::cout <<"Starting initial probability calcs";
                 for(int i = 0; i < G->nb_vertices; i++) {//THIS LOOP CAN BE PARALLELIZED!
                     float proba = tmp_vector1[i]/G->vertices[i].total_weight;
                     for(int j = 0; j < G->vertices[i].degree; j++)
@@ -82,7 +84,7 @@ Probabilities::Probabilities(int community) {
                 //          std::cout <<"initial probability calcs done";
             }
             else {
-                //          std::cout <<"Starting initial probability calcs2";
+                          std::cout <<"Starting initial probability calcs2";
                 for(int i = 0; i < nb_vertices1; i++) {
                     int v1 = vertices1[i];
                     float proba = tmp_vector1[v1]/G->vertices[v1].total_weight;
@@ -343,19 +345,24 @@ Community::Community() {
 Community::~Community() {
     if(P) delete P;
 }
-std::vector<std::vector<Neighbor*> allNeighbors(NUM_THREADS);
+std::vector<std::vector<Neighbor*> > allNeighbors(NUM_THREADS);
 int thread_count = NUM_THREADS;
 struct start_end_range
 {
     int thread_id;
     int start;
     int end;
+	Graph *graph;
+	Community *communities;
 };
 
-void *firstDistancesThreadLoop(int startInd, int endInd)
+void *firstDistancesThreadLoop(void *pargs)
 {
-    std::vector<Neighbor*> tempNeighborList:
-    for(int i = startInd; i < endInd; i++)
+	start_end_range *args = (start_end_range*)pargs;
+	Graph *G = args->graph;
+	Community *communities = args->communities;
+    std::vector<Neighbor*> tempNeighborList;
+    for(int i = args->start; i < args->end; i++)
     {
         for(int j = 0; j < G->vertices[i].degree; j++)
         {
@@ -370,6 +377,7 @@ void *firstDistancesThreadLoop(int startInd, int endInd)
                 N->weight = G->vertices[i].edges[j].weight;
                 N->exact = false;
                 tempNeighborList.push_back(N);
+				
             }
         }
     }
@@ -378,19 +386,31 @@ void *firstDistancesThreadLoop(int startInd, int endInd)
     {
         //this is the last thread
     }
+	pthread_exit(NULL);
 }
 //Join the initial results into the Neighbor linked list via add_neighbor (we do this synchronisly to avoid screwing up results)
-void joinFirstDistanceNeighborResults()
-{
-    for (int i = 0; i < NUM_THREADS; i++)
-    {
-        std::vector<Neighbor*> ns = allNeighbors[i];
-        for (int j = 0; j < ns.size(); j++)
-        {
-            add_neighbor(ns[j]);
-        }
+void Community::add_neighbor(Neighbor* N) { // add a new neighbor at the end of the list
+    if (last_neighbor) {
+        if(last_neighbor->community1 == this_community)
+            last_neighbor->next_community1 = N;
+        else
+            last_neighbor->next_community2 = N;
+        
+        if(N->community1 == this_community)
+            N->previous_community1 = last_neighbor;
+        else
+            N->previous_community2 = last_neighbor;
     }
+    else {
+        first_neighbor = N;
+        if(N->community1 == this_community)
+            N->previous_community1 = 0;
+        else
+            N->previous_community2 = 0;
+    }
+    last_neighbor = N;
 }
+
 //Communities constructor. Communities is a class that holds a graph instance, a list of the current communities, and a min-heap keyed by community distance
 Communities::Communities(Graph* graph, int random_walks_length, bool s, int d, long m) {
     silent = s;
@@ -433,68 +453,81 @@ Communities::Communities(Graph* graph, int random_walks_length, bool s, int d, l
     
     nb_communities = G->nb_vertices;
     nb_active_communities = G->nb_vertices;
-    
+	std::vector<int>test;
     if(!silent) cerr << "computing random walks and the first distances:";
     //Begin threaded implementation
     start_end_range thread_ranges_array[NUM_THREADS];
     pthread_t initialThreads[NUM_THREADS];
     pthread_attr_t initialAttr;
+	long t = 5;
     void *status;
-    /* Initialize and set thread detached attribute */
-    pthread_attr_init(&initialAttr);
-    pthread_attr_setdetachstate(&initialAttr, PTHREAD_CREATE_JOINABLE);
-    for (int i = 0; i < NUM_THREADS; i++) {
-        int start = i*(G->nb_vertices/NUM_THREADS);
-        int end = start+(G->nb_vertices/NUM_THREADS);
-        if (end > G->nb_vertices) {
-            end = G->nb_vertices;
-        }
-        if (start < G->nb_vertices && end < G->nb_vertices && start <= end) {
-            thread_ranges_array[i].thread_id = i;
-            thread_ranges_array[i].start = start;
-            thread_ranges_array[i].end = end;
-            int rc = pthread_create(&initialThreads[i], &initialAttr,firstDistancesThreadLoop,(void *) &thread_ranges_array[i]);
-            if (rc) {
-                printf("ERROR; return code from pthread_create() is %d\n", rc);
-                exit(-1);
+//    /* Initialize and set thread detached attribute */
+//    pthread_attr_init(&initialAttr);
+//    pthread_attr_setdetachstate(&initialAttr, PTHREAD_CREATE_JOINABLE);
+//    for (int i = 0; i < NUM_THREADS; i++) {
+//		
+//        int start = i*(G->nb_vertices/NUM_THREADS);
+//        int end = start+(G->nb_vertices/NUM_THREADS);
+//		std::cout << "assigning from "<< start <<" to " << end << std::endl;
+//        if (end > G->nb_vertices) {
+//            end = G->nb_vertices;
+//        }
+//        if (start < G->nb_vertices && end < G->nb_vertices && start <= end) {
+//            thread_ranges_array[i].thread_id = i;
+//            thread_ranges_array[i].start = start;
+//            thread_ranges_array[i].end = end;
+//			thread_ranges_array[i].graph = G;
+//			thread_ranges_array[i].communities = communities;
+////			pthread_create(&initialThreads[i], NULL, firstDistancesThreadLoop, (void *)t);
+//            int rc = pthread_create(&initialThreads[i], &initialAttr,firstDistancesThreadLoop,(void *) &thread_ranges_array[i]);
+//            if (rc) {
+//                printf("ERROR; return code from pthread_create() is %d\n", rc);
+//                exit(-1);
+//            }
+//        }
+//		std::cout <<"init thread " << i << std::endl;
+//    }
+//    /* Free attribute and wait for the other threads */
+//    pthread_attr_destroy(&initialAttr);
+//    for(int t=0; t<3; t++) {
+//        int rc = pthread_join(initialThreads[t], &status);
+//        if (rc) {
+//            printf("ERROR; return code from pthread_join() is %d\n", rc);
+//            exit(-1);
+//        }
+//        else printf("Main: completed join with thread %ld having a statusof %ld\n",t,(long)status);
+//    }
+//    
+////    joinFirstDistanceNeighborResults(); //take results from threads and put them in the linked list
+//	std::cout << "reducing data.." << std::endl;
+//	for (int i = 0; i < NUM_THREADS; i++)
+//    {
+//        std::vector<Neighbor *> ns = allNeighbors[i];
+//        for (int j = 0; j < ns.size(); j++)
+//        {
+//			add_neighbor(ns[i]);
+//        }
+//    }
+//	std::cout << "reducing data finished." << std::endl;
+    
+    for(int i = 0; i < G->nb_vertices; i++)
+    {//THIS LOOP CAN BE PARALLELIZED!
+        for(int j = 0; j < G->vertices[i].degree; j++)
+        {
+            if (i < G->vertices[i].edges[j].neighbor) {
+                communities[i].total_weight += G->vertices[i].edges[j].weight/2.;
+                communities[G->vertices[i].edges[j].neighbor].total_weight += G->vertices[i].edges[j].weight/2.;
+                Neighbor* N = new Neighbor;
+                N->community1 = i;
+                N->community2 = G->vertices[i].edges[j].neighbor;
+                //This is just an approximation of the delta_sigma that doesn't use any random walking.  We do this to save time.  Therefore we set the "exact" flag to false, and later we begin looping through neighbors and computing their exact values.
+                N->delta_sigma = -1./double(min(G->vertices[i].degree,  G->vertices[G->vertices[i].edges[j].neighbor].degree));
+                N->weight = G->vertices[i].edges[j].weight;
+                N->exact = false;
+                add_neighbor(N);
             }
         }
     }
-    /* Free attribute and wait for the other threads */
-    pthread_attr_destroy(&attr);
-    for(int t=0; t<NUM_THREADS; t++) {
-        rc = pthread_join(initialThreads[t], &status);
-        if (rc) {
-            printf("ERROR; return code from pthread_join() is %d\n", rc);
-            exit(-1);
-        }
-        printf("Main: completed join with thread %ld having a statusof %ld\n",t,(long)status);
-    }
-    
-    joinFirstDistanceNeighborResults(); //take results from threads and put them in the linked list
-    
-    
-    
-    
-    
-//    for(int i = 0; i < G->nb_vertices; i++)
-//    {//THIS LOOP CAN BE PARALLELIZED!
-//        for(int j = 0; j < G->vertices[i].degree; j++)
-//        {
-//            if (i < G->vertices[i].edges[j].neighbor) {
-//                communities[i].total_weight += G->vertices[i].edges[j].weight/2.;
-//                communities[G->vertices[i].edges[j].neighbor].total_weight += G->vertices[i].edges[j].weight/2.;
-//                Neighbor* N = new Neighbor;
-//                N->community1 = i;
-//                N->community2 = G->vertices[i].edges[j].neighbor;
-//                //This is just an approximation of the delta_sigma that doesn't use any random walking.  We do this to save time.  Therefore we set the "exact" flag to false, and later we begin looping through neighbors and computing their exact values.
-//                N->delta_sigma = -1./double(min(G->vertices[i].degree,  G->vertices[G->vertices[i].edges[j].neighbor].degree));
-//                N->weight = G->vertices[i].edges[j].weight;
-//                N->exact = false;
-//                add_neighbor(N);
-//            }
-//        }
-//    }
     if(max_memory != -1) {
         memory_used += min_delta_sigma->memory();
         memory_used += 2*long(G->nb_vertices)*sizeof(Community);
@@ -550,29 +583,6 @@ float Community::min_delta_sigma() {
             N = N->next_community2;
     }
     return r;
-}
-
-
-void Community::add_neighbor(Neighbor* N) { // add a new neighbor at the end of the list
-    if (last_neighbor) {
-        if(last_neighbor->community1 == this_community)
-            last_neighbor->next_community1 = N;
-        else
-            last_neighbor->next_community2 = N;
-        
-        if(N->community1 == this_community)
-            N->previous_community1 = last_neighbor;
-        else
-            N->previous_community2 = last_neighbor;
-    }
-    else {
-        first_neighbor = N;
-        if(N->community1 == this_community)
-            N->previous_community1 = 0;
-        else
-            N->previous_community2 = 0;
-    }
-    last_neighbor = N;
 }
 
 void Community::remove_neighbor(Neighbor* N) {	// remove a neighbor from the list
